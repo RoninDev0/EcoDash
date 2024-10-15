@@ -1,0 +1,65 @@
+﻿@model EcoDash.Models.DashboardModel;
+@{
+    ViewData["Title"] = "Dashboard - EcoDash";
+}
+
+<div class="container mt-5">
+    <h2 class="text-center" style="color: #2e7d32; font-weight: bold;">Welcome to Your EcoDash Dashboard</h2>
+    <p class="text-center" style="color: #666; font-size: 1.1rem;">
+        Track your eco-friendly commutes and view your progress below.
+    </p>
+
+    <div class="row mt-5">
+        <!-- Total Green Commutes -->
+        <div class="col-md-4 text-center">
+            <div class="card shadow-sm" style="border: none; border-radius: 10px;">
+                <div class="card-body" style="background-color: #e8f5e9;">
+                    <h4 style="color: #2e7d32;">Total Green Commutes</h4>
+                    <p style="font-size: 1.5rem; color: #388e3c; font-weight: bold;">@Model.TotalGreenCommutes</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- CO2 Saved (kg) -->
+        <div class="col-md-4 text-center">
+            <div class="card shadow-sm" style="border: none; border-radius: 10px;">
+                <div class="card-body" style="background-color: #e8f5e9;">
+                    <h4 style="color: #2e7d32;">CO2 Saved (kg)</h4>
+                    <p style="font-size: 1.5rem; color: #388e3c; font-weight: bold;">@Model.TotalCo2Saved.ToString("F2")</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Eco-Score -->
+        <div class="col-md-4 text-center">
+            <div class="card shadow-sm" style="border: none; border-radius: 10px;">
+                <div class="card-body" style="background-color: #e8f5e9;">
+                    <h4 style="color: #2e7d32;">Top Eco-Score</h4>
+                    <p style="font-size: 1.5rem; color: #388e3c; font-weight: bold;">@Model.TopEcoScore.ToString("F0")%</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Action Buttons Section -->
+    <div class="row mt-4 justify-content-center">
+        <div class="col-md-3 text-center">
+            <a class="btn btn-success btn-lg" href="/Route" role="button" style="background-color: #388e3c; width: 100%; padding: 15px; border-radius: 8px;">
+                Plan Your Route!
+            </a>
+        </div>
+        <div class="col-md-3 text-center">
+            <a class="btn btn-success btn-lg" href="/Route/ActiveRoutes" role="button" style="background-color: #388e3c; width: 100%; padding: 15px; border-radius: 8px;">
+                Active Routes
+            </a>
+        </div>
+
+        <div class="col-md-3 text-center">
+            <a class="btn btn-success btn-lg" href="/LeaderBoard" role="button" style="background-color: #388e3c; width: 100%; padding: 15px; border-radius: 8px;">
+                Leaderboard
+            </a>
+        </div>
+    </div>
+</div>

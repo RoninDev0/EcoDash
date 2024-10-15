@@ -1,0 +1,223 @@
+﻿@model Newtonsoft.Json.Linq.JObject
+@using Newtonsoft.Json
+
+@using System.Web;
+@{
+    ViewData["Title"] = "Route Results - EcoDash";
+}
+
+<div class="container mt-5">
+    <h2 class="text-center" style="color: #2e7d32;">Your Eco-Friendly Route Suggestions</h2>
+
+    <!-- Google Map Container -->
+    <div id="map" style="height: 500px; margin-bottom: 30px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);"></div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <!-- Route Summary Box -->
+            <div id="route-summary" class="card" style="padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                <h4 style="color: #388e3c;">Route Summary</h4>
+                <p><strong>Distance:</strong> <span id="summary-distance">-</span></p>
+                <p><strong>Duration:</strong> <span id="summary-duration">-</span></p>
+                <p><strong>CO2 Saved:</strong> <span id="summary-co2">-</span> kg</p>
+                <p><strong>Calories Burned:</strong> <span id="summary-calories">-</span> kcal</p>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            @if (Model["routes"] != null && Model["routes"].HasValues)
+            {
+                <div class="accordion" id="routeAccordion">
+                    @for (var i = 0; i < Model["routes"].Count(); i++)
+                    {
+                        var route = Model["routes"][i];
+                        var legs = route["legs"][0];
+                        var distanceKm = Convert.ToDouble(legs["distance"]["value"]) / 1000;
+                        var travelMode = legs["steps"][0]["travel_mode"].ToString().ToLower();
+                        var co2Saved = 0.0;
+                        var caloriesBurned = 0.0;
+
+                        // Calculate CO2 savings and health benefits
+                        if (travelMode == "walking" || travelMode == "bicycling")
+                        {
+                            co2Saved = distanceKm * 0.27; // CO2 saved compared to driving
+                            caloriesBurned = (travelMode == "walking") ? distanceKm * 60 : distanceKm * 30;
+                        }
+                        else if (travelMode == "transit")
+                        {
+                            co2Saved = distanceKm * 0.15; // Assume transit is greener than driving but still emits CO2
+                        }
+
+                        <div class="card">
+                            <div class="card-header" id="heading-@i" style="cursor: pointer;">
+                                <h2 class="mb-0">
+                                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse-@i" aria-expanded="true" aria-controls="collapse-@i"
+                                            onclick="showRouteSummary('@legs["distance"]["text"].ToString()',
+                              '@legs["duration"]["text"].ToString()',
+                              @co2Saved,
+                              @caloriesBurned);
+             drawRoute('@Html.Raw(HttpUtility.JavaScriptStringEncode(route["overview_polyline"]["points"].ToString()))',
+                       '@legs["start_address"].ToString()',
+                       '@legs["end_address"].ToString()');">
+                                        <i class="fas fa-route" style="margin-right: 8px;"></i>
+                                        Route Option @i+1 - @legs["distance"]["text"].ToString(), @legs["duration"]["text"].ToString()
+                                    </button>
+
+
+
+                                </h2>
+                            </div>
+
+                            <div id="collapse-@i" class="collapse" aria-labelledby="heading-@i" data-parent="#routeAccordion">
+                                <div class="card-body">
+                                    <h5>Summary: @route["summary"].ToString()</h5>
+
+                                    <p><strong>Distance:</strong> @legs["distance"]["text"].ToString()</p>
+                                    <p><strong>Duration:</strong> @legs["duration"]["text"].ToString()</p>
+                                    <p><strong>Start Location:</strong> @legs["start_address"].ToString()</p>
+                                    <p><strong>End Location:</strong> @legs["end_address"].ToString()</p>
+
+                                    <h6>Environmental Impact and Health Benefits:</h6>
+                                    <ul>
+                                        <li><strong>CO2 Saved:</strong> @co2Saved.ToString("F2") kg</li>
+                                        @if (caloriesBurned > 0)
+                                        {
+                                            <li><strong>Calories Burned:</strong> @caloriesBurned.ToString("F2") kcal</li>
+                                        }
+                                    </ul>
+
+                                    <h6>Turn-by-Turn Directions:</h6>
+                                    <ul>
+                                        @foreach (var step in legs["steps"])
+                                        {
+                                            <li>
+                                                @Html.Raw(step["html_instructions"].ToString())
+                                                - <strong>Travel Mode:</strong> @step["travel_mode"].ToString()
+                                                - <strong>Distance:</strong> @step["distance"]["text"].ToString()
+                                            </li>
+                                        }
+                                    </ul>
+                                    <button class="btn btn-success" onclick="saveRoute(routesData[@i])">Save Route</button>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <p class="text-center" style="color: red;">No routes found. Please check your input and try again.</p>
+            }
+        </div>
+    </div>
+</div>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyADr9A3PMHPWEdlt5pcCmIQEYXk7sPorpQ&libraries=geometry"></script>
+
+
+
+<script>
+    var map;
+    var polyline;
+    var startMarker, endMarker;
+
+    // Initialize the map
+    function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 12,
+            center: { lat: 43.651070, lng: -79.347015 }, // Default to Toronto or your city's location
+        });
+    }
+
+    // Function to draw a route on the map
+    function drawRoute(encodedPolyline, startAddress, endAddress) {
+        console.log("Encoded Polyline:", encodedPolyline); // Debugging
+
+        if (polyline) {
+            polyline.setMap(null);  // Remove the existing polyline if present
+        }
+
+        var path = google.maps.geometry.encoding.decodePath(encodedPolyline);
+        console.log("Decoded Path:", path); // Debugging
+
+        polyline = new google.maps.Polyline({
+            path: path,
+            geodesic: true,
+            strokeColor: '#008000',
+            strokeOpacity: 1.0,
+            strokeWeight: 3
+        });
+
+        polyline.setMap(map);
+
+        // Remove existing markers
+        if (startMarker) startMarker.setMap(null);
+        if (endMarker) endMarker.setMap(null);
+
+        // Add markers for start and end locations
+        startMarker = new google.maps.Marker({
+            position: path[0],
+            map: map,
+            label: "Start",
+            title: startAddress
+        });
+
+        endMarker = new google.maps.Marker({
+            position: path[path.length - 1],
+            map: map,
+            label: "End",
+            title: endAddress
+        });
+
+        // Adjust map bounds to fit the route
+        var bounds = new google.maps.LatLngBounds();
+        for (var i = 0; i < path.length; i++) {
+            bounds.extend(path[i]);
+        }
+        map.fitBounds(bounds);
+    }
+
+    // Function to display route summary in the side box
+    function showRouteSummary(distance, duration, co2Saved, caloriesBurned) {
+        document.getElementById('summary-distance').textContent = distance;
+        document.getElementById('summary-duration').textContent = duration;
+        document.getElementById('summary-co2').textContent = co2Saved.toFixed(2);
+        document.getElementById('summary-calories').textContent = (caloriesBurned > 0) ? caloriesBurned.toFixed(2) : '-';
+    }
+
+    // Initialize the map on page load
+    google.maps.event.addDomListener(window, 'load', initMap);
+</script>
+<script>
+    var routesData = [];
+
+    @for (var i = 0; i < Model["routes"].Count(); i++)
+    {
+        var route = Model["routes"][i];
+        @:routesData.push(@Html.Raw(JsonConvert.SerializeObject(route)));
+    }
+
+        // This function sends the selected route data to the server
+        function saveRoute(routeData) {
+            $.ajax({
+                url: '/Route/SaveRoute', // Correct endpoint
+                type: 'POST',
+                data: JSON.stringify(routeData), // Ensure the data is stringified before sending
+                contentType: 'application/json',
+                success: function (response) {
+                    alert('Route saved successfully!');
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error saving route:', {
+                        status: status,
+                        error: error,
+                        responseText: xhr.responseText,
+                        xhr: xhr
+                    });
+                    alert('Failed to save route.');
+                }
+            });
+        }
+</script>

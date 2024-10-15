@@ -1,0 +1,94 @@
+﻿@model List<MongoDB.Bson.BsonDocument>
+
+@{
+    ViewData["Title"] = "Your Active Routes - EcoDash";
+}
+
+<div class="container mt-5">
+    <h2 class="text-center" style="color: #2e7d32;">Your Active Routes</h2>
+
+    @if (Model != null && Model.Count > 0)
+    {
+        <div class="row">
+            @foreach (var route in Model)
+            {
+                <div class="col-md-6 mb-4">
+                    <div class="card" style="box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); padding: 20px;">
+                        <h4>@route["summary"].ToString()</h4>
+                        <p><strong>Distance:</strong> @route["legs"][0]["distance"]["text"].ToString()</p>
+                        <p><strong>Duration:</strong> @route["legs"][0]["duration"]["text"].ToString()</p>
+                        <p><strong>CO2 Saved:</strong> @route["co2Saved"].ToString() kg</p>
+                        <p><strong>Calories Burned:</strong> @route["caloriesBurned"].ToString() kcal</p>
+                        <p><strong>Completed:</strong> @(route["Completed"].ToBoolean() ? "True" : "False")</p>
+
+
+                        @if (!route["Completed"].ToBoolean())
+                        {
+                            <!-- Mark as Done Button -->
+                            <button class="btn btn-success mt-2" onclick="openMarkAsDoneModal('@route["_id"].ToString()')">Mark As Done</button>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p class="text-center" style="color: red;">You have no active routes.</p>
+    }
+</div>
+<!-- Modal for Image Upload -->
+<div class="modal fade" id="markAsDoneModal" tabindex="-1" aria-labelledby="markAsDoneModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="markAsDoneModalLabel">Upload Image to Mark Route as Done</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="markAsDoneForm" enctype="multipart/form-data">
+                    <input type="file" name="routeImage" accept="image/*" required>
+                    <input type="hidden" id="routeId" name="routeId">
+                    <button type="submit" class="btn btn-primary mt-2">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    // Open modal and pass route ID to the form
+    function openMarkAsDoneModal(routeId) {
+        $('#routeId').val(routeId);
+        $('#markAsDoneModal').modal('show');
+    }
+
+    // Handle the form submission for marking a route as done
+    $('#markAsDoneForm').on('submit', function (e) {
+        e.preventDefault();
+
+        var formData = new FormData(this);
+        $.ajax({
+            url: '/Route/MarkAsDone',  // URL to handle the image upload and mark as done
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (response) {
+                alert('Route marked as done and points added!');
+                window.location.reload();  // Reload the page to reflect changes
+            },
+            error: function (xhr, status, error) {
+                console.error('Error marking route as done:', {
+                    status: status,
+                    error: error,
+                    responseText: xhr.responseText
+                });
+                alert('Failed to mark route as done.');
+            }
+        });
+    });
+</script>
+
+

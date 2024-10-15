@@ -1,27 +1,98 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
+using EcoDash.Data;
+using EcoDash.Services;
+using dotenv.net;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+
+// Load environment variables from .env file
+DotEnv.Load(options: new DotEnvOptions(probeForEnv: true));
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddControllersWithViews();
+// Configure services
+ConfigureServices(builder.Services, builder);
 
+// Build the application
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+// Configure middleware
+ConfigureMiddleware(app);
+
+// Run the application
+app.Run();
+
+// Helper methods
+void ConfigureServices(IServiceCollection services, WebApplicationBuilder builder)
 {
-    app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+    // Read environment variables directly
+    var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
+    var databaseName = Environment.GetEnvironmentVariable("DatabaseName");
+
+    // Validate that the environment variables are not empty
+    if (string.IsNullOrEmpty(connectionString) || string.IsNullOrEmpty(databaseName))
+    {
+        throw new Exception("ConnectionString or DatabaseName environment variables are not set.");
+    }
+
+    // MongoDB context registration using environment variables
+    services.AddSingleton<MongoDbContext>(sp =>
+    {
+        return new MongoDbContext(connectionString, databaseName);
+    });
+
+    // Register controllers with views
+    services.AddControllersWithViews();
+
+    // Register RouteService using HttpClient
+    services.AddHttpClient<RouteService>(); // Corrected to services.AddHttpClient()
+
+    // Enable CORS if needed
+    services.AddCors(options =>
+    {
+        options.AddPolicy("AllowAll", builder =>
+        {
+            builder.AllowAnyOrigin()
+                   .AllowAnyMethod()
+                   .AllowAnyHeader();
+        });
+    });
+
+    // Authentication and Authorization
+    services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+        .AddCookie(options =>
+        {
+            options.LoginPath = "/Login/Index";
+        });
+
+    services.AddAuthorization();
 }
 
-app.UseHttpsRedirection();
-app.UseStaticFiles();
+void ConfigureMiddleware(WebApplication app)
+{
+    // Error handling
+    if (!app.Environment.IsDevelopment())
+    {
+        app.UseExceptionHandler("/Error?error=true");
+        //app.UseHttpsRedirection();
+        app.UseHsts();
+    }
 
-app.UseRouting();
+    // Middleware pipeline
+    app.UseHttpsRedirection();
+    app.UseStaticFiles();
+    app.UseRouting();
 
-app.UseAuthorization();
+    // Enable authentication and authorization middleware
+    app.UseAuthentication();
+    app.UseAuthorization();
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    // Enable CORS
+    app.UseCors("AllowAll");
 
-app.Run();
+    // Route configuration
+    app.MapControllerRoute(
+        name: "default",
+        pattern: "{controller=Home}/{action=Index}/{id?}");
+}

@@ -1,0 +1,51 @@
+﻿@{
+    ViewData["Title"] = "Find Eco-Friendly Routes - EcoDash";
+}
+
+<div class="container mt-5">
+    <h2 class="text-center" style="color: #2e7d32;">Find Eco-Friendly Routes</h2>
+
+    <form asp-action="GetRoutes" method="post" class="mt-4" style="max-width: 600px; margin: 0 auto;">
+        <div class="form-group">
+            <label for="startLocation" style="color: #2e7d32;">Start Location</label>
+            <input type="text" name="startLocation" class="form-control" id="startLocation" placeholder="Enter starting point" required />
+        </div>
+
+        <div class="form-group mt-3">
+            <label for="destination" style="color: #2e7d32;">Destination</label>
+            <input type="text" name="destination" class="form-control" id="destination" placeholder="Enter destination" required />
+        </div>
+
+        <!-- Mode of transportation dropdown -->
+        <div class="form-group mt-3">
+            <label for="mode" style="color: #2e7d32;">Mode of Transportation</label>
+            <select name="mode" class="form-control" id="mode" required>
+                <option value="walking">Walking</option>
+                <option value="bicycling">Bicycling</option>
+                <option value="transit">Public Transit</option>
+                <option value="driving">Driving</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-success btn-lg mt-4" style="background-color: #388e3c; width: 100%;">Find Routes</button>
+    </form>
+</div>
+
+@section Scripts {
+    <!-- Ensure Google API key is authorized for the Places API -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyADr9A3PMHPWEdlt5pcCmIQEYXk7sPorpQ&libraries=places"></script>
+    <script>
+        function initializeAutocomplete() {
+            var startLocation = document.getElementById('startLocation');
+            var destination = document.getElementById('destination');
+
+            var autocompleteStart = new google.maps.places.Autocomplete(startLocation);
+            var autocompleteDestination = new google.maps.places.Autocomplete(destination);
+
+            autocompleteStart.setFields(['formatted_address']);
+            autocompleteDestination.setFields(['formatted_address']);
+        }
+
+        google.maps.event.addDomListener(window, 'load', initializeAutocomplete);
+    </script>
+}
