@@ -1,15 +1,14 @@
-using System.Diagnostics;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
 
 namespace EcoDash.Controllers
 {
-    public class HomeController : Controller
+    [Authorize]
+    public class DashboardController : Controller
     {
         public IActionResult Index()
         {
             return View();
         }
-
     }
 }

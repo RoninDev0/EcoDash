@@ -1,0 +1,36 @@
+﻿@model EcoDash.Models.ErrorModel
+
+@{
+    ViewData["Title"] = "Error - EcoDash";
+}
+
+<div class="container mt-5">
+    <section class="section-intro">
+        <p>
+            @if (Model.ErrorMessage != null && Model.RequestId != null)
+            {
+                <div class="container mt-5">
+                    <div class="alert alert-danger" role="alert" style="padding: 30px; border-radius: 15px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); max-width: 800px; margin: 0 auto; background-color: #f8d7da;">
+                        <h2 class="text-center" style="color: #721c24; font-weight: bold;">Oops! Something Went Wrong.</h2>
+                        <hr style="border-top: 1px solid #f5c6cb;">
+                        <p style="font-size: 1.1rem; line-height: 1.6; color: #721c24; margin-bottom: 15px;">
+                            The following error occurred:
+                        </p>
+                        <div style="background-color: #f1b0b7; color: #721c24; padding: 15px; border-radius: 10px; white-space: pre-line; font-size: 1rem; line-height: 1.5; font-family: 'Courier New', monospace;">
+                            <strong>Error Message:</strong> @Model.ErrorMessage<br>
+                            <strong>Request ID:</strong> @Model.RequestId
+                        </div>
+                        <p style="font-size: 1.1rem; line-height: 1.6; color: #721c24; margin-top: 15px;">
+                            Please try again later or contact support if the issue persists.
+                        </p>
+                        <a class="btn btn-success" href="/" style="background-color: #388e3c; margin-top: 20px;">Go to Home</a>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <span style="color:red;">Please try again later or contact support!</span>
+            }
+        </p>
+    </section>
+</div>
