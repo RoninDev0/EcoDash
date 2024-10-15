@@ -1,4 +1,6 @@
 ﻿@model Newtonsoft.Json.Linq.JObject
+@using Newtonsoft.Json
+
 @using System.Web;
 @{
     ViewData["Title"] = "Route Results - EcoDash";
@@ -95,6 +97,9 @@
                                             </li>
                                         }
                                     </ul>
+                                    <button class="btn btn-success" onclick="saveRoute(routesData[@i])">Save Route</button>
+
+
                                 </div>
                             </div>
                         </div>
@@ -110,6 +115,9 @@
 </div>
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyADr9A3PMHPWEdlt5pcCmIQEYXk7sPorpQ&libraries=geometry"></script>
+
+
+
 <script>
     var map;
     var polyline;
@@ -181,4 +189,35 @@
 
     // Initialize the map on page load
     google.maps.event.addDomListener(window, 'load', initMap);
+</script>
+<script>
+    var routesData = [];
+
+    @for (var i = 0; i < Model["routes"].Count(); i++)
+    {
+        var route = Model["routes"][i];
+        @:routesData.push(@Html.Raw(JsonConvert.SerializeObject(route)));
+    }
+
+        // This function sends the selected route data to the server
+        function saveRoute(routeData) {
+            $.ajax({
+                url: '/Route/SaveRoute', // Correct endpoint
+                type: 'POST',
+                data: JSON.stringify(routeData), // Ensure the data is stringified before sending
+                contentType: 'application/json',
+                success: function (response) {
+                    alert('Route saved successfully!');
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error saving route:', {
+                        status: status,
+                        error: error,
+                        responseText: xhr.responseText,
+                        xhr: xhr
+                    });
+                    alert('Failed to save route.');
+                }
+            });
+        }
 </script>

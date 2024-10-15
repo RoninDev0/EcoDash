@@ -1,23 +1,30 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using EcoDash.Data;
 using EcoDash.Services;
+using dotenv.net;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
-dotenv.net.DotEnv.Load(options: new dotenv.net.DotEnvOptions(probeForEnv: true));
+// Load environment variables from .env file
+DotEnv.Load(options: new DotEnvOptions(probeForEnv: true));
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Configure services
-ConfigureServices(builder.Services);
+ConfigureServices(builder.Services, builder);
 
+// Build the application
 var app = builder.Build();
 
 // Configure middleware
 ConfigureMiddleware(app);
 
+// Run the application
 app.Run();
 
 // Helper methods
-void ConfigureServices(IServiceCollection services)
+void ConfigureServices(IServiceCollection services, WebApplicationBuilder builder)
 {
     // Read environment variables directly
     var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
@@ -38,15 +45,26 @@ void ConfigureServices(IServiceCollection services)
     // Register controllers with views
     services.AddControllersWithViews();
 
-    // add routes service
-    builder.Services.AddHttpClient<RouteService>();
+    // Register RouteService using HttpClient
+    services.AddHttpClient<RouteService>(); // Corrected to services.AddHttpClient()
 
-    //Authentication
-    services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options =>
+    // Enable CORS if needed
+    services.AddCors(options =>
     {
-        options.LoginPath = "/Login/Index";
+        options.AddPolicy("AllowAll", builder =>
+        {
+            builder.AllowAnyOrigin()
+                   .AllowAnyMethod()
+                   .AllowAnyHeader();
+        });
     });
+
+    // Authentication and Authorization
+    services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+        .AddCookie(options =>
+        {
+            options.LoginPath = "/Login/Index";
+        });
 
     services.AddAuthorization();
 }
@@ -57,6 +75,7 @@ void ConfigureMiddleware(WebApplication app)
     if (!app.Environment.IsDevelopment())
     {
         app.UseExceptionHandler("/Error?error=true");
+        //app.UseHttpsRedirection();
         app.UseHsts();
     }
 
@@ -64,7 +83,13 @@ void ConfigureMiddleware(WebApplication app)
     app.UseHttpsRedirection();
     app.UseStaticFiles();
     app.UseRouting();
+
+    // Enable authentication and authorization middleware
+    app.UseAuthentication();
     app.UseAuthorization();
+
+    // Enable CORS
+    app.UseCors("AllowAll");
 
     // Route configuration
     app.MapControllerRoute(
