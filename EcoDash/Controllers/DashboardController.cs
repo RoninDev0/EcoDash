@@ -45,6 +45,7 @@ namespace EcoDash.Controllers
                 TotalPoints = user.Contains("totalPoints") ? user["totalPoints"].ToInt32() : 0,
                 TopEcoScore = user.Contains("topEcoScore") ? user["topEcoScore"].ToDouble() : 0.0
             };
+                
 
             // Pass the ViewModel to the view
             return View(model);

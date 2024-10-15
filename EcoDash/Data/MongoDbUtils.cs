@@ -29,12 +29,17 @@ namespace EcoDash.Data
 
                 // Create a new BSON document to represent the new user
                 var newUser = new BsonDocument
-        {
-            { "Username", Model.Username },
-            { "Password", hashedPassword },
-            { "GUID", newGuid },
-            { "CreatedAt", DateTime.UtcNow } // Optionally store the creation date
-        };
+{
+    { "Username", Model.Username },
+    { "Password", hashedPassword },
+    { "GUID", newGuid },
+    { "CreatedAt", DateTime.UtcNow }, // Optionally store the creation date
+    { "totalGreenCommutes", 0 },
+    { "totalCo2Saved", 0.0 },
+    { "totalCaloriesBurned", 0.0 },
+    { "totalPoints", 0 },
+    { "topEcoScore", 0.0 }
+};
 
                 // Insert the new user into the collection
                 Users.InsertOne(newUser);
