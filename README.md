@@ -43,7 +43,7 @@ GOOGLE_MAPS_KEY=<Your_Google_Maps_API_Key>
 3. **Restore Dependencies**
 dotnet restore
 
-💬 <span style="color: #2e7d32;">Contact</span>
+## 💬 <span style="color: #2e7d32;">Contact</span>
 
 For questions or support
 
