@@ -56,8 +56,8 @@ Create 2 Collections
 
 For questions or support
 
-GitHub: [RoninDev0](https://github.com/RoninDev0)
-Email: ronindevhackathon@gmail.com
+- GitHub: [RoninDev0](https://github.com/RoninDev0)
+- Email: ronindevhackathon@gmail.com
 
 ## License
 
