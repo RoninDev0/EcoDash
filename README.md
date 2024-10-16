@@ -36,9 +36,9 @@ Follow these steps to set up and run the project locally:
 
 2. **Create a .env file in the root of the project directory and set the following variables**
 
-ConnectionString=<Your_MongoDB_Connection_String>
-DatabaseName=<Your_Database_Name>
-GOOGLE_MAPS_KEY=<Your_Google_Maps_API_Key>
+- ConnectionString=<Your_MongoDB_Connection_String>
+- DatabaseName=<Your_Database_Name>
+- GOOGLE_MAPS_KEY=<Your_Google_Maps_API_Key>
 
 3. **Restore Dependencies**
 dotnet restore
