@@ -1,16 +1,16 @@
 # <span style="color: #2e7d32;">EcoDash</span>
 
-EcoDash is a web application designed to promote eco-friendly commuting by providing real-time route suggestions from multiple transport services. It helps users calculate their CO2 savings, calories burned, and compare their progress on a leaderboard with other users. The app aims to inspire sustainability and reduce the carbon footprint of its users.
+**EcoDash** is a web application designed to promote eco-friendly commuting by providing real-time route suggestions from multiple transport services. It calculates CO2 savings, calories burned, and allows users to compare their progress on a leaderboard. The app aims to inspire sustainability and help users reduce their carbon footprint by making informed, greener commuting decisions.
 
 ---
 
 ## 🌟 Features
 
-- 🚶 Real-time **eco-friendly route suggestions** based on walking, biking, and public transport.
-- 🌍 Calculate and track **CO2 savings** and **calories burned** during each commute.
-- 🏆 Gamified **leaderboard** to compare your progress with other users.
-- 📸 Upload **route images** upon completion of commutes.
-- 🗺️ Integrated with **Google Maps** for accurate route planning.
+- 🚶 **Real-Time Eco-Friendly Route Suggestions**: Get route suggestions based on walking, biking, and public transportation to reduce your carbon footprint.
+- 🌍 **Track CO2 Savings & Calories Burned**: Calculate and track CO2 savings and calories burned for each commute.
+- 🏆 **Gamified Leaderboard**: Compare your eco-friendly progress with other users and compete to be the greenest commuter.
+- 📸 **Route Image Uploads**: Upload and share images of completed routes to document your eco-friendly journeys.
+- 🗺️ **Google Maps Integration**: Plan routes with accuracy using Google Maps integration for real-time suggestions and navigation.
 
 ---
 
@@ -18,19 +18,33 @@ EcoDash is a web application designed to promote eco-friendly commuting by provi
 
 ### Prerequisites
 
-- **.NET Core SDK**
-- **MongoDB** (or MongoDB Atlas for cloud-based storage)
-- **Google Maps API Key**
+Before running the project, ensure you have the following tools installed:
+
+- **.NET Core SDK** – [Download here](https://dotnet.microsoft.com/download)
+- **MongoDB** (local installation or use **MongoDB Atlas** for cloud-based storage) – [Download MongoDB](https://www.mongodb.com/try/download/community)
+- **Google Maps API Key** – [Get a Google Maps API Key](https://developers.google.com/maps/documentation/javascript/get-api-key)
 
 ### Setup
 
-1. Clone the repository:
+Follow these steps to set up and run the project locally:
+
+1. **Clone the Repository**  
+   Start by cloning the project repository from GitHub:
+   bash
    git clone https://github.com/your-username/ecodash.git
    cd ecodash
 
-2. Setup Enviroment Variables
-   .env
+2. **Create a .env file in the root of the project directory and set the following variables**
 
-ConnectionString=
-DatabaseName=
-GOOGLE_MAPS_KEY=
+# MongoDB connection string
+ConnectionString=<Your_MongoDB_Connection_String>
+
+# Name of the MongoDB database
+DatabaseName=<Your_Database_Name>
+
+# Google Maps API Key
+GOOGLE_MAPS_KEY=<Your_Google_Maps_API_Key>
+
+
+3. **Restore Dependencies**
+dotnet restore
