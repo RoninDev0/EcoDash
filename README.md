@@ -36,15 +36,15 @@ Follow these steps to set up and run the project locally:
 
 2. **Create a .env file in the root of the project directory and set the following variables**
 
-# MongoDB connection string
 ConnectionString=<Your_MongoDB_Connection_String>
-
-# Name of the MongoDB database
 DatabaseName=<Your_Database_Name>
-
-# Google Maps API Key
 GOOGLE_MAPS_KEY=<Your_Google_Maps_API_Key>
-
 
 3. **Restore Dependencies**
 dotnet restore
+
+💬 <span style="color: #2e7d32;">Contact</span>
+
+For questions or support
+
+GitHub: [RoninDev0](https://github.com/RoninDev0)
