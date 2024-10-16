@@ -46,7 +46,7 @@ void ConfigureServices(IServiceCollection services, WebApplicationBuilder builde
     services.AddControllersWithViews();
 
     // Register RouteService using HttpClient
-    services.AddHttpClient<RouteService>(); // Corrected to services.AddHttpClient()
+    services.AddHttpClient<RouteService>();
 
     // Enable CORS if needed
     services.AddCors(options =>
@@ -67,20 +67,32 @@ void ConfigureServices(IServiceCollection services, WebApplicationBuilder builde
         });
 
     services.AddAuthorization();
+
+    // Add HSTS settings for production
+    if (!builder.Environment.IsDevelopment())
+    {
+        services.AddHsts(options =>
+        {
+            options.MaxAge = TimeSpan.FromDays(365); // 1 year HSTS policy
+            options.IncludeSubDomains = true; // Apply HSTS to subdomains
+            options.Preload = true; // Preload HSTS across all domains
+        });
+    }
 }
 
 void ConfigureMiddleware(WebApplication app)
 {
-    // Error handling
+    // Error handling for production
     if (!app.Environment.IsDevelopment())
     {
         app.UseExceptionHandler("/Error?error=true");
-        //app.UseHttpsRedirection();
-        app.UseHsts();
+        app.UseHsts();  // Enforce HSTS for production
     }
 
-    // Middleware pipeline
+    // Redirect HTTP requests to HTTPS
     app.UseHttpsRedirection();
+
+    // Middleware pipeline
     app.UseStaticFiles();
     app.UseRouting();
 
