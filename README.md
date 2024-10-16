@@ -41,7 +41,10 @@ Follow these steps to set up and run the project locally:
 - GOOGLE_MAPS_KEY=<Your_Google_Maps_API_Key>
 
 3. **Restore Dependencies**
-dotnet restore
+- dotnet restore
+
+4. **Run Application**
+- dotnet run
 
 ## 💬 <span style="color: #2e7d32;">Contact</span>
 
