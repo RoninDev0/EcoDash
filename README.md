@@ -29,10 +29,10 @@ Before running the project, ensure you have the following tools installed:
 Follow these steps to set up and run the project locally:
 
 1. **Clone the Repository**  
-   Start by cloning the project repository from GitHub:
-   bash
-   git clone https://github.com/your-username/ecodash.git
-   cd ecodash
+   - Start by cloning the project repository from GitHub:
+   - bash
+   - git clone https://github.com/RoninDev0/EcoDash
+   - cd ecodash
 
 2. **Create a .env file in the root of the project directory and set the following variables**
 
