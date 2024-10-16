@@ -46,6 +46,12 @@ Follow these steps to set up and run the project locally:
 4. **Run Application**
 - dotnet run
 
+# Mongo DB Setup
+Create 2 Collections
+
+- Routes
+- Members
+
 ## 💬 <span style="color: #2e7d32;">Contact</span>
 
 For questions or support
