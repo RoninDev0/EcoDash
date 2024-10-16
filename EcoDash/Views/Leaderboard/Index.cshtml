@@ -1,45 +1,49 @@
 ﻿@model List<LeaderboardModel>
 
 <div class="container mt-5">
+    <!-- Leaderboard Title -->
     <h2 class="text-center" style="color: #2e7d32; font-weight: bold;">Leaderboard</h2>
 
-    <table class="table table-bordered table-hover mt-4" style="border-color: #2e7d32;">
-        <thead class="bg-success text-white">
-            <tr>
-                <th>Rank</th>
-                <th>Username</th>
-                <th>Total Points</th>
-                <th>Completed Routes</th>
-            </tr>
-        </thead>
-        <tbody>
-            @for (int i = 0; i < Model.Count; i++)
-            {
+    <!-- Leaderboard Table -->
+    <div class="table-responsive" style="max-height: 500px; overflow-y: auto; border: 1px solid #2e7d32; border-radius: 10px;">
+        <table class="table table-bordered table-hover mt-4" style="border-color: #2e7d32;">
+            <thead class="bg-success text-white" style="position: sticky; top: 0; z-index: 100;">
                 <tr>
-                    <td style="font-weight: bold;">@(i + 1)</td>
-                    <td>@Model[i].Username</td>
-                    <td>@Model[i].TotalPoints</td>
-                    <td>
-                        <div>
-                            <h6 class="text-success mb-3">Completed Routes</h6>
-                            <!-- Flex container for the routes -->
-                            <div class="d-flex flex-wrap">
-                                @foreach (var route in Model[i].FinishedRoutes)
-                                {
-                                    <!-- Card for each route -->
-                                    <div class="card mb-3 me-3 shadow-sm" style="width: 12rem; border: none; border-radius: 10px;">
-                                        <img src="/Route/GetRouteImage?routeId=@route.RouteID" class="card-img-top" alt="Route Image" style="height: 150px; width: 100%; object-fit: cover; border-top-left-radius: 10px; border-top-right-radius: 10px;">
-                                        <div class="card-body" style="padding: 15px; background-color: #e8f5e9;">
-                                            <p class="card-text" style="font-size: 0.8rem;">Distance: @route.Distance.ToString("F2") km</p>
-                                            <p class="card-text" style="font-size: 0.8rem;">CO2 Saved: @route.Co2Saved.ToString("F2") kg</p>
-                                        </div>
-                                    </div>
-                                }
-                            </div>
-                        </div>
-                    </td>
+                    <th style="width: 10%;">Rank</th>
+                    <th style="width: 25%;">Username</th>
+                    <th style="width: 15%;">Total Points</th>
+                    <th style="width: 50%;">Completed Routes</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    <tr>
+                        <td style="font-weight: bold; text-align: center;">@(i + 1)</td>
+                        <td>@Model[i].Username</td>
+                        <td>@Model[i].TotalPoints</td>
+                        <td>
+                            <div>
+                                <h6 class="text-success mb-3" style="font-weight: bold;">Completed Routes</h6>
+                                <!-- Flex container for the routes -->
+                                <div class="d-flex flex-wrap justify-content-start">
+                                    @foreach (var route in Model[i].FinishedRoutes)
+                                    {
+                                        <!-- Card for each route -->
+                                        <div class="card mb-3 me-3 shadow-sm" style="width: 12rem; border: 1px solid #2e7d32; border-radius: 10px;">
+                                            <img src="/Route/GetRouteImage?routeId=@route.RouteID" class="card-img-top" alt="Route Image" style="height: 150px; width: 100%; object-fit: cover; border-top-left-radius: 10px; border-top-right-radius: 10px;">
+                                            <div class="card-body" style="padding: 10px; background-color: #e8f5e9;">
+                                                <p class="card-text" style="font-size: 0.85rem; margin-bottom: 5px;">Distance: @route.Distance.ToString("F2") km</p>
+                                                <p class="card-text" style="font-size: 0.85rem;">CO2 Saved: @route.Co2Saved.ToString("F2") kg</p>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 </div>

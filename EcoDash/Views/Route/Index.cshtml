@@ -32,8 +32,8 @@
 </div>
 
 @section Scripts {
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyADr9A3PMHPWEdlt5pcCmIQEYXk7sPorpQ&libraries=places"></script>
-    
+    <script src="https://maps.googleapis.com/maps/api/js?key=@ViewData["GoogleMapsApiKey"]&libraries=places"></script>
+
     <script>
         function initializeAutocomplete() {
             var startLocation = document.getElementById('startLocation');
