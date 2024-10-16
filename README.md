@@ -57,3 +57,10 @@ Create 2 Collections
 For questions or support
 
 GitHub: [RoninDev0](https://github.com/RoninDev0)
+Email: ronindevhackathon@gmail.com
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+
