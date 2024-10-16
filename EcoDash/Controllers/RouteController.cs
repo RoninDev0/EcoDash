@@ -34,6 +34,9 @@ namespace EcoDash.Controllers
         [HttpGet]
         public IActionResult Index()
         {
+            var googleMapsApiKey = Environment.GetEnvironmentVariable("GOOGLE_MAPS_KEY");
+            ViewData["GoogleMapsApiKey"] = googleMapsApiKey;
+
             return View();
         }
 
@@ -56,7 +59,9 @@ namespace EcoDash.Controllers
                 return View("RouteResults");
             }
 
-            // Pass valid route data to the view
+            var googleMapsApiKey = Environment.GetEnvironmentVariable("GOOGLE_MAPS_KEY");
+            ViewData["GoogleMapsApiKey"] = googleMapsApiKey;
+
             return View("RouteResults", routesData);
         }
         [HttpPost]
